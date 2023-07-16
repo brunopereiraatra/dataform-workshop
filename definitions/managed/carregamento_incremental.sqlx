@@ -1,0 +1,15 @@
+config {
+    type: 'incremental',
+    schema: 'managed',
+    name: 'BP_vendas_incremental',
+    tags: ['inicial', 'incremental'],
+    dependencies: ['BP_ext_vendas'],
+}
+
+SELECT *
+FROM ${ref('BP_ext_vendas')} cl
+
+${
+    when(incremental(), 
+    `WHERE pedido_data > (SELECT MAX(pedido_data) FROM ${self()})`) 
+}
